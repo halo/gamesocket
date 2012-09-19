@@ -1,6 +1,7 @@
 require 'spec_helper'
 require 'gamesocket/server'
 require 'gamesocket/event'
+require 'gamesocket/serializer'
 
 describe GameSocket::Server do
 
@@ -34,7 +35,7 @@ describe GameSocket::Server do
 
     it 'sends an event to a registered remote' do
       # Registering the client
-      @client1.send Marshal.dump(sender_id: 'red_client', event_name: :hello, data: nil), 0
+      @client1.send GameSocket::Serializer.pack(sender_id: 'red_client', event_name: :hello, data: nil), 0
       sleep 0.05
       @it.receive_events {}
       # Sending the event
@@ -42,23 +43,23 @@ describe GameSocket::Server do
       @it.send_event event
       sleep 0.05
       # Making sure it arrived
-      Marshal.load(@client1.recvfrom_nonblock(65507).first).should == { sender_id: 'blue_server', kind: :blue, data: { some: 'data' } }
+      GameSocket::Serializer.unpack(@client1.recvfrom_nonblock(65507).first).should == { sender_id: 'blue_server', kind: :blue, data: { some: 'data' } }
     end
   end
 
   describe '#broadcast' do
     it 'sends events to all registered remotes' do
       # Registering the clients
-      @client1.send Marshal.dump({ sender_id: 'white_client', kind: :hello }), 0
-      @client2.send Marshal.dump({ sender_id: 'green_client', kind: :hi }), 0
+      @client1.send GameSocket::Serializer.pack({ sender_id: 'white_client', kind: :hello }), 0
+      @client2.send GameSocket::Serializer.pack({ sender_id: 'green_client', kind: :hi }), 0
       sleep 0.05
       @it.receive_events {}
       # Broadcasting
       @it.broadcast GameSocket::Event.new kind: :blue, data: { :some => 'one' }
       sleep 0.05
       # Making sure it arrived
-      Marshal.load(@client1.recvfrom_nonblock(65507).first).should == { sender_id: 'blue_server', kind: :blue, data: { some: 'one' } }
-      Marshal.load(@client2.recvfrom_nonblock(65507).first).should == { sender_id: 'blue_server', kind: :blue, data: { some: 'one' } }
+      GameSocket::Serializer.unpack(@client1.recvfrom_nonblock(65507).first).should == { sender_id: 'blue_server', kind: :blue, data: { some: 'one' } }
+      GameSocket::Serializer.unpack(@client2.recvfrom_nonblock(65507).first).should == { sender_id: 'blue_server', kind: :blue, data: { some: 'one' } }
     end
   end
 
@@ -71,9 +72,9 @@ describe GameSocket::Server do
 
     it 'yields all events' do
       # Sending events
-      @client1.send Marshal.dump({ sender_id: 'purple_client', kind: :luke, data: { :some => 'ice' } }), 0
-      @client2.send Marshal.dump({ sender_id: 'yellow_client', kind: :anakin, data: { :some => 'fire' } }), 0
-      @client2.send Marshal.dump({ sender_id: 'yellow_client', kind: :lea, data: { :some => 'water' } }), 0
+      @client1.send GameSocket::Serializer.pack({ sender_id: 'purple_client', kind: :luke, data: { :some => 'ice' } }), 0
+      @client2.send GameSocket::Serializer.pack({ sender_id: 'yellow_client', kind: :anakin, data: { :some => 'fire' } }), 0
+      @client2.send GameSocket::Serializer.pack({ sender_id: 'yellow_client', kind: :lea, data: { :some => 'water' } }), 0
       sleep 0.05
       stack = []
       # Receiving them

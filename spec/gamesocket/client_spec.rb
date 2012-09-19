@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'gamesocket/client'
+require 'gamesocket/serializer'
 
 describe GameSocket::Client do
 
@@ -34,7 +35,7 @@ describe GameSocket::Client do
       event = GameSocket::Event.new kind: :dance, data: { :some => 'data' }
       @it.send_event event
       sleep 0.05
-      Marshal.load(@server.recvfrom(65507).first).should == { sender_id: 'abcdefgh', kind: :dance, data: { some: 'data' } }
+      GameSocket::Serializer.unpack(@server.recvfrom(65507).first).should == { sender_id: 'abcdefgh', kind: :dance, data: { some: 'data' } }
     end
   end
 
@@ -56,8 +57,8 @@ describe GameSocket::Client do
     end
 
     it 'yields all events' do
-      @server.send Marshal.dump({ sender_id: 'server', kind: :shot, data: { some: 'data' } }), 0
-      @server.send Marshal.dump({ sender_id: 'server', kind: :blob, data: { some: 'more data' } }), 0
+      @server.send GameSocket::Serializer.pack({ sender_id: 'server', kind: :shot, data: { some: 'data' } }), 0
+      @server.send GameSocket::Serializer.pack({ sender_id: 'server', kind: :blob, data: { some: 'more data' } }), 0
       sleep 0.05
       stack = []
       @it.receive_events { |event| stack << event }

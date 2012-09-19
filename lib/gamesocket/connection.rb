@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 require 'gamesocket/game_socket'
+require 'gamesocket/serializer'
 require 'securerandom'
 
 module GameSocket
@@ -37,16 +38,16 @@ module GameSocket
 
     def receive_remotes_and_payloads(&block)
       @socket.receive_datagrams do |datagram|
-        payload = Marshal.load(datagram.payload)
+        payload = GameSocket::Serializer.unpack(datagram.payload)
         unless payload.is_a?(Hash)
-          Log.error "Network port received invalid event payload: #{payload.inspect}"
+          #Log.error "Network port received invalid event payload: #{payload.inspect}"
           next
         end
         remote = Remote.new(id: payload[:sender_id], endpoint: datagram.endpoint, port: datagram.port)
         if remote.valid?
           yield remote, payload
         else
-          Log.error "Network port received packet from invalid remote: #{remote.inspect}"
+          #Log.error "Network port received packet from invalid remote: #{remote.inspect}"
         end
       end
     end

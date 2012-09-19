@@ -2,6 +2,7 @@ require 'gamesocket/connection'
 require 'gamesocket/event'
 require 'gamesocket/pool'
 require 'gamesocket/remote'
+require 'gamesocket/serializer'
 
 module GameSocket
   class Server < Connection
@@ -20,7 +21,7 @@ module GameSocket
         #Log.debug "Remote #{event.receiver_id.inspect} not found. I have #{@pool.remotes.inspect}"
         return
       end
-      payload = Marshal.dump({ sender_id: id, kind: event.kind, data: event.data })
+      payload = Serializer.pack({ sender_id: id, kind: event.kind, data: event.data })
       @socket.send_datagram Datagram.new endpoint: remote.endpoint, port: remote.port, payload: payload
     end
 

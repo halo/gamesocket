@@ -3,6 +3,7 @@ require 'gamesocket/extensions/object/blank'
 require 'gamesocket/connection'
 require 'gamesocket/event'
 require 'gamesocket/remote'
+require 'gamesocket/serializer'
 
 
 module GameSocket
@@ -20,7 +21,7 @@ module GameSocket
         #Log.error "Network stack received invalid event from client: #{event.inspect}"
         return
       end
-      payload = Marshal.dump({ sender_id: id, kind: event.kind, data: event.data })
+      payload = Serializer.pack({ sender_id: id, kind: event.kind, data: event.data })
       @socket.send_datagram Datagram.new endpoint: remote.endpoint, port: remote.port, payload: payload
     end
 

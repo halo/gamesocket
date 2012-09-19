@@ -1,15 +1,14 @@
 # -*- encoding: utf-8 -*-
 require 'gamesocket/game_socket'
-require 'satellite/extensions/core/object/random'
-
+require 'securerandom'
 
 module GameSocket
   class Connection
     attr_reader :id
 
     def initialize(options={})
-      @id = options[:id] || random_id
-      @socket = GameSocket.new preferred_port: options[:port]
+      @id = options[:id] || SecureRandom.uuid
+      @socket = Socket.new preferred_port: options[:port]
     end
 
     def port

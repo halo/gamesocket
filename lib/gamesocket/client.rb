@@ -1,7 +1,5 @@
 # -*- encoding: utf-8 -*-
-require 'ostruct'
-require 'satellite/extensions/core/object/blank'
-require 'satellite/extensions/core/object/random'
+require 'gamesocket/extensions/object/blank'
 require 'gamesocket/connection'
 require 'gamesocket/event'
 require 'gamesocket/remote'
@@ -13,13 +11,13 @@ module GameSocket
 
     def initialize(options={})
       @remote = Remote.new endpoint: options[:server_endpoint], port: options[:server_port]
-      Log.debug "My server is #{@remote.endpoint}:#{@remote.port}."
+      #Log.debug "My server is #{@remote.endpoint}:#{@remote.port}."
       super
     end
 
     def send_event(event)
       unless event.is_a?(Event)
-        Log.error "Network stack received invalid event from client: #{event.inspect}"
+        #Log.error "Network stack received invalid event from client: #{event.inspect}"
         return
       end
       payload = Marshal.dump({ sender_id: id, kind: event.kind, data: event.data })

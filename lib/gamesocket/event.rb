@@ -1,4 +1,4 @@
-require 'satellite/extensions/core/object/blank'
+require 'gamesocket/extensions/object/blank'
 
 
 module GameSocket

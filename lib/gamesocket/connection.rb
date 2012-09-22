@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-require 'gamesocket/game_socket'
+require 'gamesocket/socket'
 require 'gamesocket/serializer'
 require 'gamesocket/log'
 require 'securerandom'

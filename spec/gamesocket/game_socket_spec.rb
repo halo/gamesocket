@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'gamesocket/game_socket'
+require 'gamesocket/socket'
 
 describe GameSocket::Socket do
 

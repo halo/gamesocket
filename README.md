@@ -1,3 +1,5 @@
+[![Build Status](https://secure.travis-ci.org/funkensturm/gamesocket.png)](http://travis-ci.org/funkensturm/gamesocket)
+
 #### Requirements
 
 * Ruby 1.9.3

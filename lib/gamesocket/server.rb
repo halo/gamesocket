@@ -3,6 +3,7 @@ require 'gamesocket/event'
 require 'gamesocket/pool'
 require 'gamesocket/remote'
 require 'gamesocket/serializer'
+require 'gamesocket/log'
 
 module GameSocket
   class Server < Connection
@@ -14,11 +15,11 @@ module GameSocket
 
     def send_event(event)
       unless event.is_a?(Event)
-        #Log.error "Network stack received invalid event from server: #{event.inspect}"
+        Log.debug "Network stack received invalid event from server: #{event.inspect}"
         return
       end
       unless remote = @pool.find(event.receiver_id)
-        #Log.debug "Remote #{event.receiver_id.inspect} not found. I have #{@pool.remotes.inspect}"
+        Log.debug "Remote #{event.receiver_id.inspect} not found. I have #{@pool.remotes.inspect}"
         return
       end
       payload = Serializer.pack({ sender_id: id, kind: event.kind, data: event.data })
@@ -27,7 +28,7 @@ module GameSocket
 
     def broadcast(event)
       unless event.is_a?(Event)
-        #Log.error "Network stack received invalid broadcast event from server: #{event.inspect}"
+        Log.error "Network stack received invalid broadcast event from server: #{event.inspect}"
         return
       end
       remotes.values.each do |remote|

@@ -5,10 +5,8 @@ require 'gamesocket/udp_socket'
 describe GameSocket::UDPSocket do
 
   before do
-    @port = ENV['GAMESOCKET_TEST_PORT1'].to_i
-    @port.should > 0
     @it = GameSocket::UDPSocket.new
-    @it.bind host: nil, port: @port
+    @it.bind host: nil, port: GameSocket::Test::server_port
   end
 
   after do
@@ -24,7 +22,7 @@ describe GameSocket::UDPSocket do
 
   describe '#port' do
     it 'knows the port' do
-      @it.port.should == @port
+      @it.port.should == GameSocket::Test::server_port
     end
   end
 

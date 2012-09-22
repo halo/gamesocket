@@ -1,5 +1,6 @@
 require 'gamesocket/datagram'
 require 'gamesocket/udp_socket'
+require 'gamesocket/log'
 
 module GameSocket
   class Socket
@@ -54,17 +55,17 @@ module GameSocket
     # Internal: Start listening on a socket. Useful for testing.
     def start!
       ports = ports_to_try
-      #Log.debug "Trying ports #{ports.inspect}..."
+      Log.debug "Trying ports #{ports.inspect}..."
       until socket.port || !(try_port = ports.shift)
         begin
-          #Log.debug "Trying to listen on port #{try_port}..."
+          Log.debug "Trying to listen on port #{try_port}..."
           socket.bind port: try_port
-          #Log.info "Successfully listening on port #{try_port}..."
+          Log.info "Successfully listening on port #{try_port}..."
         rescue Errno::EADDRINUSE, Errno::EINVAL
-          #Log.warn "Port #{try_port} occupied, trying another..."
+          Log.warn "Port #{try_port} occupied, trying another..."
         end
       end
-      #Log.error "Could not find any port to listen on..." unless port
+      Log.error "Could not find any port to listen on..." unless port
     end
 
     def port

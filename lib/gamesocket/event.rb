@@ -1,5 +1,5 @@
 require 'gamesocket/extensions/object/blank'
-
+require 'gamesocket/extensions/hash/keys'
 
 module GameSocket
   class Event
@@ -11,6 +11,7 @@ module GameSocket
     attr_reader :data
 
     def initialize(options={})
+      options.symbolize_keys!
       @receiver_id = options[:receiver_id].presence.to_s.strip
       @sender_id = options[:sender_id].presence.to_s.strip
       @kind = options[:kind]

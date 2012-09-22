@@ -4,7 +4,7 @@ require 'gamesocket/connection'
 require 'gamesocket/event'
 require 'gamesocket/remote'
 require 'gamesocket/serializer'
-
+require 'gamesocket/log'
 
 module GameSocket
   class Client < Connection
@@ -12,13 +12,13 @@ module GameSocket
 
     def initialize(options={})
       @remote = Remote.new endpoint: options[:server_endpoint], port: options[:server_port]
-      #Log.debug "My server is #{@remote.endpoint}:#{@remote.port}."
+      Log.debug "My server is #{@remote.endpoint}:#{@remote.port}."
       super
     end
 
     def send_event(event)
       unless event.is_a?(Event)
-        #Log.error "Network stack received invalid event from client: #{event.inspect}"
+        Log.error "Network stack received invalid event from client: #{event.inspect}"
         return
       end
       payload = Serializer.pack({ sender_id: id, kind: event.kind, data: event.data })
